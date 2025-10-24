@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+ENV/
+
+# Chroma DB (vector database - can be large)
+chroma_db/
+
+# OCR Cache
+.cache/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Node (for React UI)
+cogito-ui/node_modules/
+cogito-ui/dist/
+cogito-ui/.vite/
+
+# User-specific data
+db_index.json
+settings.json
+
+# Data files (optional - uncomment if you don't want to commit documents)
+# data/

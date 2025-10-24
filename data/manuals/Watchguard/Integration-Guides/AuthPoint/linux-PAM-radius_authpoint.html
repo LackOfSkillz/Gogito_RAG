@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" lang="en-us" xml:lang="en-us" class="_Skins_Help_Center_Side_Nav" data-mc-search-type="Stem" data-mc-help-system-file-name="index.xml" data-mc-path-to-help-system="../../../" data-mc-has-content-body="True" data-mc-toc-path="Self-Help Tools|Integration Guides|AuthPoint" data-mc-target-type="WebHelp2" data-mc-runtime-file-type="Topic;Default" data-mc-preload-images="false" data-mc-in-preview-mode="false">
+    <!-- saved from url=(0016)http://localhost -->
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta http-equiv="Expires" content="3600" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="msapplication-config" content="../../../Skins/Favicons/browserconfig.xml" />
+        <link rel="apple-touch-icon" sizes="120x120" href="../../../Skins/Favicons/apple-touch-icon.png" />
+        <link rel="shortcut icon" href="../../../Skins/Favicons/favicon-32x32.png" />
+        <link rel="icon" sizes="96x96" href="../../../Skins/Favicons/favicon-96x96.png" />
+        <link rel="icon" sizes="32x32" href="../../../Skins/Favicons/favicon-32x32.png" />
+        <link rel="icon" sizes="16x16" href="../../../Skins/Favicons/favicon-16x16.png" /><title>Linux PAM Integration with AuthPoint</title>
+        <!-- Google Tag Manager -->
+        <!-- End Google Tag Manager -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link href="../../../Skins/Default/Stylesheets/Slideshow.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/TextEffects.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/Topic.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Styles.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Tablet.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Mobile.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Print.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Fluid/Stylesheets/foundation.6.2.3.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Fluid/Stylesheets/Styles.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Fluid/Stylesheets/Tablet.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Fluid/Stylesheets/Mobile.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../../Skins/Fluid/Stylesheets/Print.css" rel="stylesheet" type="text/css" data-mc-generated="True" />
+        <link href="../../Resources/Stylesheets/help_(en-US).css" rel="stylesheet" type="text/css" />
+        <link rel="apple-touch-icon" sizes="120x120" href="../../../Skins/Favicons/apple-touch-icon.png" />
+        <link rel="shortcut icon" href="../../../Skins/Favicons/favicon-32x32.png" />
+        <link rel="icon" sizes="96x96" href="../../../Skins/Favicons/favicon-96x96.png" />
+        <link rel="icon" sizes="32x32" href="../../../Skins/Favicons/favicon-32x32.png" />
+        <link rel="icon" sizes="16x16" href="../../../Skins/Favicons/favicon-16x16.png" />
+        <script src="../../../Resources/Scripts/jquery.min.js" type="text/javascript">
+        </script>
+        <script src="../../../Resources/Scripts/purify.min.js" type="text/javascript" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/require.min.js" type="text/javascript" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/require.config.js" type="text/javascript" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/foundation.6.2.3_custom.js" type="text/javascript" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/plugins.min.js" type="text/javascript" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/MadCapAll.js" type="text/javascript" defer="defer">
+        </script>
+        <script>/* <![CDATA[ */
+			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&amp;l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-T3SCZC3');/* ]]> */</script>
+    </head>
+    <body>
+        <div class="foundation-wrap off-canvas-wrapper">
+            <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper="">
+                <aside class="off-canvas position-left" role="navigation" id="offCanvas" data-off-canvas="" data-position="left" data-mc-ignore="true">
+                    <ul class="off-canvas-accordion vertical menu off-canvas-list" data-accordion-menu="" data-mc-back-link="Back" data-mc-css-tree-node-expanded="is-accordion-submenu-parent" data-mc-css-tree-node-collapsed="is-accordion-submenu-parent" data-mc-css-sub-menu="vertical menu is-accordion-submenu nested" data-mc-include-indicator="False" data-mc-include-icon="False" data-mc-include-parent-link="True" data-mc-include-back="False" data-mc-defer-expand-event="True" data-mc-expand-event="click.zf.accordionMenu" data-mc-toc="True">
+                    </ul>
+                </aside>
+                <div class="off-canvas-content inner-wrap" data-off-canvas-content="">
+                    <div data-sticky-container="" class="title-bar-container">
+                        <nav class="title-bar tab-bar sticky" role="banner" data-sticky="" data-options="marginTop:0" style="width:100%" data-sticky-on="only screen and (max-width: 979px)" data-mc-ignore="true"><a class="skip-to-content fluid-skip showOnFocus" href="#">Skip To Main Content</a>
+                            <div class="middle title-bar-section outer-row clearfix">
+                                <div class="menu-icon-container relative clearfix">
+                                    <div class="central-account-wrapper">
+                                        <div class="central-dropdown"><a class="central-account-drop"><span class="central-account-image"></span><span class="central-account-text">Account</span></a>
+                                            <div class="central-dropdown-content"><a class="MCCentralLink central-dropdown-content-settings">Settings</a>
+                                                <hr class="central-separator" /><a class="MCCentralLink central-dropdown-content-logout">Logout</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="menu-icon" aria-label="Show Navigation Panel" data-toggle="offCanvas"><span></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="title-bar-layout outer-row">
+                                <div class="logo-wrapper"><a class="logo" href="../../en-US/_intro/home.html" alt="Logo"></a>
+                                </div>
+                                <div class="navigation-wrapper nocontent">
+                                    <ul class="navigation clearfix" role="navigation" data-mc-css-tree-node-has-children="has-children" data-mc-css-sub-menu="sub-menu" data-mc-expand-event="mouseenter" data-mc-top-nav-menu="True" data-mc-max-depth="3" data-mc-include-icon="False" data-mc-include-indicator="False" data-mc-include-children="True" data-mc-include-siblings="True" data-mc-include-parent="True" data-mc-toc="True">
+                                        <li class="placeholder" style="visibility:hidden"><a>placeholder</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="central-account-wrapper">
+                                    <div class="central-dropdown"><a class="central-account-drop"><span class="central-account-image"></span><span class="central-account-text">Account</span></a>
+                                        <div class="central-dropdown-content"><a class="MCCentralLink central-dropdown-content-settings">Settings</a>
+                                            <hr class="central-separator" /><a class="MCCentralLink central-dropdown-content-logout">Logout</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nav-search-wrapper">
+                                    <div class="nav-search row">
+                                        <form class="search" action="#">
+                                            <div class="search-bar search-bar-container needs-pie">
+                                                <input class="search-field needs-pie" type="search" aria-label="Search Field" placeholder="Search" />
+                                                <div class="search-filter-wrapper"><span class="invisible-label" id="search-filters-label">Filter: </span>
+                                                    <div class="search-filter" aria-haspopup="true" aria-controls="sf-content" aria-expanded="false" aria-label="Search Filter" title="All Files" role="button" tabindex="0">
+                                                    </div>
+                                                    <div class="search-filter-content" id="sf-content">
+                                                        <ul>
+                                                            <li>
+                                                                <button class="mc-dropdown-item" aria-labelledby="search-filters-label filterSelectorLabel-00001"><span id="filterSelectorLabel-00001">All Files</span>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="search-submit-wrapper" dir="ltr">
+                                                    <div class="search-submit" title="Search" role="button" tabindex="0"><span class="invisible-label">Submit Search</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="main-section">
+                        <div class="row outer-row sidenav-layout">
+                            <nav class="sidenav-wrapper">
+                                <div class="sidenav-container">
+                                    <ul class="off-canvas-accordion vertical menu sidenav" data-accordion-menu="" data-mc-css-tree-node-expanded="is-accordion-submenu-parent" data-mc-css-tree-node-collapsed="is-accordion-submenu-parent" data-mc-css-sub-menu="vertical menu accordion-menu is-accordion-submenu nested" data-mc-include-indicator="False" data-mc-include-icon="False" data-mc-include-parent-link="False" data-mc-include-back="False" data-mc-defer-expand-event="True" data-mc-expand-event="click.zf.accordionMenu" data-mc-toc="True" data-mc-side-nav-menu="True">
+                                    </ul>
+                                </div>
+                            </nav>
+                            <div class="body-container">
+                                <div data-mc-content-body="True">
+                                    <div id="cover">
+                                    </div>
+                                    <!-- Google Tag Manager (noscript) -->
+                                    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3SCZC3" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+                                    </noscript>
+                                    <!-- End Google Tag Manager (noscript) -->
+                                    <div class="nocontent">
+                                        <div class="MCBreadcrumbsBox_0 breadcrumbs" role="navigation" aria-label="Breadcrumbs" data-mc-breadcrumbs-divider=" &gt; " data-mc-breadcrumbs-count="6" data-mc-toc="True"><span class="MCBreadcrumbsPrefix"> </span>
+                                        </div>
+                                    </div>
+                                    <div role="main" id="mc-main-content">
+                                        <h1 id="LinuxPAMIntegrationwithAuthPoint" data-magellan-target="LinuxPAMIntegrationwithAuthPoint"><a name="aanchor3221"></a>
+                                            <MadCap:concept term="Self-Help Tools" /><a name="aanchor3222"></a>
+                                            <MadCap:concept term="AuthPoint" />Linux PAM Integration with AuthPoint</h1>
+                                        <h2 id="Contents" data-magellan-target="Contents">Contents</h2>
+                                        <ul data-magellan="" data-animation-duration="250" data-active-class="selected" data-scroll-container=".body-container" data-scroll-container-on="only screen and (min-width: 980px)" class="nocontent menu _Skins_Help_Center_Menu_Slide mc-component">
+                                            <li class="tree-node"><a href="#LinuxPAMIntegrationwithAuthPoint">Linux PAM Integration with AuthPoint</a>
+                                            </li>
+                                            <li>
+                                                <ul>
+                                                    <li class="tree-node"><a href="#Contents">Contents</a>
+                                                    </li>
+                                                    <li class="tree-node"><a href="#DeploymentOverview">Deployment Overview</a>
+                                                    </li>
+                                                    <li>
+                                                        <ul>
+                                                            <li class="tree-node"><a href="#LinuxPAMAuthenticationDataFlowwithAuthPoint">Linux PAM Authentication Data Flow with AuthPoint</a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="tree-node"><a href="#BeforeYouBegin">Before You Begin</a>
+                                                    </li>
+                                                    <li class="tree-node"><a href="#ConfigureUbuntu2204LTS">Configure Ubuntu 22.04 LTS</a>
+                                                    </li>
+                                                    <li class="tree-node"><a href="#ConfigureAuthPoint">Configure AuthPoint</a>
+                                                    </li>
+                                                    <li>
+                                                        <ul>
+                                                            <li class="tree-node"><a href="#AddaRadiusResourceinAuthPoint">Add a Radius Resource in AuthPoint</a>
+                                                            </li>
+                                                            <li class="tree-node"><a href="#AddaGroupinAuthPoint">Add a Group in AuthPoint</a>
+                                                            </li>
+                                                            <li class="tree-node"><a href="#AddanAuthenticationPolicytoAuthPoint">Add an Authentication Policy to AuthPoint</a>
+                                                            </li>
+                                                            <li class="tree-node"><a href="#BindtheRADIUSResourcetoaGateway">Bind the RADIUS Resource to a Gateway</a>
+                                                            </li>
+                                                            <li class="tree-node"><a href="#AddUserstoAuthPoint">Add Users to AuthPoint</a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="tree-node"><a href="#TesttheIntegration">Test the Integration</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <h2 id="DeploymentOverview" data-magellan-target="DeploymentOverview">Deployment Overview</h2>
+                                        <p>This document describes how to set up multi-factor authentication (MFA) for Linux PAM with  AuthPoint. Linux PAM must already be configured and deployed before you set up MFA with AuthPoint.</p>
+                                        <p>Your Linux can be configured to support MFA in several modes. For this integration, we set up RADIUS authentication with AuthPoint. RADIUS authentication requires that you install the AuthPoint Gateway on your network, which functions as a RADIUS server.</p>
+                                        <p>This integration was tested with Ubuntu 22.04 LTS.</p>
+                                        <h3 id="LinuxPAMAuthenticationDataFlowwithAuthPoint" data-magellan-target="LinuxPAMAuthenticationDataFlowwithAuthPoint">Linux PAM Authentication Data Flow with AuthPoint</h3>
+                                        <p>AuthPoint communicates with various cloud-based services and service providers with the Radius protocol. This diagram shows the data flow of an MFA transaction for Linux.</p>
+                                        <p class="img">
+                                            <img src="_images/Linux PAM/Topology diagram.png" style="max-height: auto;max-width: 100%;" alt="Topology diagram" />
+                                        </p>
+                                        <h2 id="BeforeYouBegin" data-magellan-target="BeforeYouBegin">Before You Begin</h2>
+                                        <p>Before you begin these procedures, make sure that:</p>
+                                        <ul style="list-style-type: square;">
+                                            <li>You have installed and configured the AuthPoint Gateway (see <a href="https://www.watchguard.com/help/docs/help-center/en-US/Content/en-US/authpoint/gateways.html">About Gateways</a>)</li>
+                                            <li>A token is assigned to a user in AuthPoint</li>
+                                        </ul>
+                                        <h2 id="ConfigureUbuntu2204LTS" data-magellan-target="ConfigureUbuntu2204LTS"><a name="Configur"></a>Configure Ubuntu 22.04 LTS</h2>
+                                        <ol>
+                                            <li value="1">Log in to your Linux server as a root user.</li>
+                                            <li value="2">Type <span class="Input">$ sudo apt-get install libpam-radius-auth</span> and press <b>Enter</b> to install PAM with Radius Authentication Module.</li>
+                                            <li value="3">Edit the <span class="Input">/etc/ssh/sshd_config</span> file to enable PAM authentication in the ssh service. Make sure <span class="Input">KbdInteractiveAuthentication yes</span> is enabled and does not include a <span class="Input">#</span>.</li>
+                                            <li value="4">Edit the <span class="Input">/etc/ssh/sshd_config</span> file to ensure that <span class="Input">UsePAM yes</span> is enabled and does not include a <span class="Input">#</span>.</li>
+                                            <li value="5">Save and quit.</li>
+                                            <li value="6">Edit the <span class="Input">/etc/pam.d/sshd</span> file and add the line <span class="Input">auth sufficient pam_radius_auth.so</span> at the beginning of the file to enable PAM with Radius in the PAM module. Make sure you comment out the <span class="Input">@include common-auth</span> line.</li>
+                                            <li value="7"> Save and quit.</li>
+                                            <li value="8">Edit the <span class="Input">/etc/pam_radius_auth.conf</span> file and comment out the default 4 lines.</li>
+                                            <p class="img_indent_1">
+                                                <img src="_images/Linux PAM/PAM1.jpg" style="max-height: auto;max-width: 90%;" alt="Screenshot of PAM, comment out the default 4 lines in the pam_radius_auth.conf file" />
+                                            </p>
+                                            <li value="9">Edit the <span class="Input">/etc/pam_radius_auth.conf</span> file and add a line that specifies the IP address of the RADIUS server (AuthPoint Gateway) and shared secret.<br /></li>
+                                            <p>For example, add a line without specifying the vrf field and the source_ip field.</p>
+                                            <p class="img_indent_1">
+                                                <img src="_images/Linux PAM/PAM2.jpg" style="max-height: auto;max-width: 90%;" alt="Screenshot of PAM, add a line to the pam_radius_auth.conf file" />
+                                            </p>
+                                            <p>If you want to specify the vrf field and the source_ip field, you should create a VRF device with an associated route table, and assign a network interface to the VRF. For more information about how to create VRF, refer to <a href="https://www.kernel.org/doc/Documentation/networking/vrf.txt">Virtual Routing and Forwarding (VRF)</a>.</p>
+                                            <p>After you have created a VRF, you can use the command <span class="Input">$ ip -br link show type vrf</span> to list the VRF, and the command <span class="Input">$ ip -br link show vrf &lt;vrf name&gt;</span> to display the device assigned to the VRF.</p>
+                                            <p class="img_indent_1">
+                                                <img src="_images/Linux PAM/PAM3.jpg" style="max-height: auto;max-width: 90%;" alt="Screenshot of PAM, commands to list the vrf and device assigned to the vrf" />
+                                            </p>
+                                            <p>Refer to the screenshot below for an example of a line that specifies the vrf field and the source_ip field.</p>
+                                            <p class="img_indent_1">
+                                                <img src="_images/Linux PAM/PAM4.jpg" style="max-height: auto;max-width: 90%;" alt="Screenshot of PAM, add a line to the pam_radius_auth.conf file with vrf field configured" />
+                                            </p>
+                                            <li value="10">Save and quit.</li>
+                                            <li value="11">Add the configuration folder:</li>
+                                            <ol style="list-style-type: lower-alpha;">
+                                                <li value="1">Type <span class="Input">$ sudo mkdir /etc/raddb</span> and press <b>Enter</b>.</li>
+                                                <li value="2">Type <span class="Input">$ sudo cp /etc/pam_radius_auth.conf /etc/raddb/server</span> and press <b>Enter</b>.</li>
+                                            </ol>
+                                            <li value="12">Type <span class="Input">$ sudo service ssh restart</span> and press <b>Enter</b> to restart the ssh service.</li>
+                                            <li value="13">Type <span class="Input">$ sudo adduser &lt;user name&gt;</span> and press <b>Enter</b> to create a user on the Linux server. You must create a user with the same user name in AuthPoint.<br /></li>
+                                        </ol>
+                                        <h2 id="ConfigureAuthPoint" data-magellan-target="ConfigureAuthPoint">Configure AuthPoint</h2>
+                                        <p style="page-break-after: always;page-break-before: avoid;">Before AuthPoint can receive authentication requests from Linux PAM, you must:</p>
+                                        <ul>
+                                            <li>Specify Linux PAM as a RADIUS client <a href="#" class="MCTextPopup popup popupHead popupHeaddefinition">resource<span class="MCTextPopupBody MCTextPopupBody_Closed needs-pie popupBody" aria-hidden="true"><span class="MCTextPopupArrow"> </span>In AuthPoint, resources are the applications and services that your users connect to.</span></a> in AuthPoint.</li>
+                                            <li>Add an <a href="#" class="MCTextPopup popup popupHead popupHeaddefinition">authentication policy<span class="MCTextPopupBody MCTextPopupBody_Closed needs-pie popupBody" aria-hidden="true"><span class="MCTextPopupArrow"> </span>Authentication policies specify which resources users can authenticate to and which authentication methods they can use (Push, QR code, and OTP).</span></a> for the Linux PAM RADIUS client resource or add the Linux PAM RADIUS client resource to an existing authentication policy.</li>
+                                            <li>Bind the Linux PAM RADIUS client resource to the AuthPoint Gateway.</li>
+                                        </ul>
+                                        <h3 id="AddaRadiusResourceinAuthPoint" data-magellan-target="AddaRadiusResourceinAuthPoint">Add a Radius Resource in AuthPoint</h3>
+                                        <p>From the AuthPoint management UI:</p>
+                                        <ol>
+                                            <li value="1">From the navigation menu, select <b>Resources</b>.
+ Click <b>Add Resource</b>.<br /><span class="NumContinued">The Add Resource page opens.</span><![CDATA[        
+        ]]></li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_resources.png" style="height: auto;max-width: 100%;max-height: auto;width: 750px;" class="hasBorder" />
+                                        </p>
+                                        <ol data-mc-continue="true">
+                                            <li value="2">From the <b>Type</b> drop-down list, select <b>RADIUS Client</b>.<br /><span class="NumContinued">Additional fields appear.</span></li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_resources_add.png" />
+                                        </p>
+                                        <ol start="3">
+                                            <li value="3">In the <b>Name</b> text box, type a descriptive name for the resource.</li>
+                                            <li value="4">In the <b>RADIUS client trusted IP or FQDN</b> text box, type the IP address that your RADIUS client uses to send RADIUS packets to the AuthPoint Gateway. This must be a private IP address. If you specified the vrf field in <a href="#Configur">the previous section</a>, this address is the IP address of the network interface assigned to the VRF device.</li>
+                                            <li value="5">From the <b>Value sent for RADIUS attribute 11</b> drop-down list, specify what is sent for the attribute 11 (Filter-ID) value in RADIUS responses. You can choose to send the user's AuthPoint group or the user's Active Directory groups.</li>
+                                            <li value="6">In the <b>Shared Secret</b> text box, type the shared secret key. This is the password that the RADIUS server (AuthPoint Gateway) and the RADIUS client (Linux Server) will use to communicate.</li>
+                                            <li value="7">Click <b>Save</b>.</li>
+                                        </ol>
+                                        <h3 id="AddaGroupinAuthPoint" data-magellan-target="AddaGroupinAuthPoint">Add a Group in AuthPoint</h3>
+                                        <p style="page-break-after: avoid;page-break-before: avoid;">You must have at least one user group in AuthPoint to configure MFA. If you already have a group, you do not have to add another group.</p>
+                                        <p>To add a WatchGuard Cloud-hosted group to the WatchGuard Cloud Directory:</p>
+                                        <ol>
+                                            <li value="1">Go to <b>Configure &gt;&#160;Directories and Domain Services</b>.</li>
+                                            <li value="2">Click the WatchGuard Cloud Directory domain name. If you have not yet added the WatchGuard Cloud Directory, click <b>Add Authentication Domain</b> and select the WatchGuard Cloud Directory.<br /><span class="NumContinued">The New Group page appears.</span></li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/auth_domains.png" alt="Screenshot that shows the Directories and Domain Services page." />
+                                        </p>
+                                        <ol data-mc-continue="true">
+                                            <li value="3">In the <b>Groups</b> tab, click <b>Add Group</b>.</li>
+                                            <li value="4">In the <b>Group Name</b> text box, type a descriptive name for the group.</li>
+                                            <li value="5">(Optional) In the <b>Description</b> text box, type a description of the group.</li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/auth_domain_add_group.png" alt="Screen shot of the Add Group page." />
+                                        </p>
+                                        <ol data-mc-continue="true">
+                                            <li value="6">Click <b>Save</b>.<br /><span class="NumContinued">Your group is added to the WatchGuard Cloud Directory and to AuthPoint.</span></li>
+                                        </ol>
+                                        <h3 id="AddanAuthenticationPolicytoAuthPoint" data-magellan-target="AddanAuthenticationPolicytoAuthPoint">Add an Authentication Policy to AuthPoint</h3>
+                                        <p>Authentication policies specify which resources users can authenticate to and which authentication methods they can use (Push, QR code, and OTP).</p>
+                                        <p>You must have at least one authentication policy in AuthPoint that includes the Linux PAM RADIUS client resource. If you already have authentication policies, you do not have to create a new authentication policy. You can add this resource to your existing authentication policies.</p>
+                                        <p class="Note">Users that do not have an authentication policy for a specific resource cannot authenticate to log in to that resource.</p>
+                                        <p class="Note">For the Linux PAM RADIUS client resource, you must select the password authentication option in your authentication policies.</p>
+                                        <p>To configure an authentication policy:</p>
+                                        <ol style="page-break-after: avoid;">
+                                            <li value="1">From the navigation menu, select <b>Authentication Policies</b>.<br /><span class="NumContinued">The Authentication Policies page opens.</span></li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_policies_empty.png" style="max-height: auto;max-width: 100%;height: auto;width: 850px;" alt="Screenshot of the Add Policy button on the Authentication Policies page." />
+                                        </p>
+                                        <ol style="page-break-after: avoid;page-break-inside: avoid;" data-mc-continue="true">
+                                            <li value="2">Click <b>Add Policy</b>.<br /><span class="NumContinued">The Add Policy page opens.</span></li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_policies_add_auth-options_radius.png" style="height: auto;max-width: 100%;max-height: auto;width: 600px;" />
+                                        </p>
+                                        <ol style="page-break-after: avoid;page-break-inside: avoid;" data-mc-continue="true">
+                                            <li value="3">In the <b>Name</b> text box, type a name for this policy.</li>
+                                            <li value="4">From the <b>Select the Authentication Options</b> drop-down list, select <b>Authentication Options</b>, then select which authentication options users can choose from when they authenticate.<p class="Note">If you enable the push and OTP authentication methods for a policy, RADIUS client resources associated with that policy use push notifications to authenticate users.</p><p class="Note">QR code authentication is not supported for RADIUS client resources.</p></li>
+                                            <li value="5">From the <b>Groups</b> drop-down list, select which groups this policy applies to. You can select more than one group. To configure this policy to apply to all groups, select <b>All Groups</b>.</li>
+                                            <li value="6">From the <b>Resources</b> drop-down list, select the resource that you created in the previous section. If you want this policy to apply to additional resources, select each resource this policy applies to. To configure this policy to apply to all resources, select <b>All Resources</b>.</li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_policy_groups-resources_radius.png" style="max-width: 100%;max-height: auto;height: auto;width: 600px;" alt="Screenshot of the Add Policy page with the groups and resources selected" />
+                                        </p>
+                                        <ol style="page-break-after: avoid;page-break-inside: avoid;" data-mc-continue="true">
+                                            <li value="7">
+                                                <p>(Optional) If you have configured policy objects such as a Network Location, select which policy objects apply to this policy. When you add a policy object to a policy, the policy only applies to user authentications that match the conditions of the policy objects. For example, if you add a Network Location to a policy, the policy only applies to user authentications that come from that Network Location. Users who only have a policy that includes a Network Location do not get access to the resource when they authenticate outside of that Network Location (because they do not have a policy that applies, not because authentication is denied).</p>
+                                                <p class="Note">For RADIUS authentication, policies that have a Network Location do not apply because AuthPoint does not have the IP address of the user.</p>
+                                                <p class="Note">If you configure policy objects, we recommend that you create a second policy for the same groups and resources without the policy objects. The policy with the policy objects should have a higher priority.</p>
+                                            </li>
+                                        </ol>
+                                        <p class="img_indent_1">
+                                            <img src="../../__Templates/images/apt_policies_select_policy-objects.png" style="max-height: auto;max-width: 100%;height: auto;width: 600px;" alt="Screenshot of the Policy Objects drop-down list." />
+                                        </p>
+                                        <ol style="page-break-after: avoid;page-break-inside: avoid;" data-mc-continue="true">
+                                            <li value="8">Click <b>Save</b>.
+<br /><span class="NumContinued">Your policy is created and added to the end of the policy list.
+</span><p class="Note">When you create a new policy, we recommend that you review the order of your policies. AuthPoint always adds new policies to the end of the policy list.</p></li>
+                                        </ol>
+                                        <h3 id="BindtheRADIUSResourcetoaGateway" data-magellan-target="BindtheRADIUSResourcetoaGateway">Bind the RADIUS Resource to a Gateway</h3>
+                                        <p>To use RADIUS authentication with AuthPoint, you must have the AuthPoint Gateway installed on your corporate network and you must assign your RADIUS resources to the Gateway in the AuthPoint web UI. The Gateway functions as a RADIUS server.</p>
+                                        <p class="Note">If you have not configured and installed the AuthPoint Gateway, see <a href="https://www.watchguard.com/help/docs/help-center/en-US/Content/en-US/authpoint/gateways.html">About Gateways</a>.</p>
+                                        <ol start="1">
+                                            <li value="1">From the navigation menu, select <b>Gateway</b>.</li>
+                                            <li value="2">Select the <b>Name</b> of the Gateway.</li>
+                                            <li value="3">
+                                                <p>From the <b>RADIUS</b> section, in the <b>Port</b> text box, type the port number used to communicate with the Gateway. The default ports are 1812 and 1645.</p>
+                                                <p class="Note">If you already have a RADIUS server installed that uses port 1812 or 1645, you must use a different port for the AuthPoint Gateway.</p>
+                                            </li>
+                                            <li value="4">From the <b>Select a RADIUS Resource</b> drop-down list, select  your RADIUS client resource.</li>
+                                            <li value="5">Click <b>Save</b>.</li>
+                                        </ol>
+                                        <h3 id="AddUserstoAuthPoint" data-magellan-target="AddUserstoAuthPoint">Add Users to AuthPoint</h3>
+                                        <p>Before you assign users to a group, you must add the users to AuthPoint. There are two ways to add AuthPoint user accounts:</p>
+                                        <ul>
+                                            <li>Sync users from an external user database</li>
+                                            <li>Add WatchGuard Cloud-hosted AuthPoint users</li>
+                                        </ul>
+                                        <p class="Note">Each user must be a member of a group. You must add at least one group before you can add users to AuthPoint.</p>
+                                        <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="#" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false">To import users from an external user database:<img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="12" width="16" alt="Closed" data-mc-alt2="Open" /></a></span>
+                                            <div class="MCDropDownBody dropDownBody">
+                                                <p>To import users from Active Directory, Microsoft Entra ID, or an LDAP database, you must add an <i>external identity</i> in the AuthPoint management UI. External identities connect to user databases to get user account information and validate passwords.</p>
+                                                <ul>
+                                                    <li>To sync users from Active Directory or an LDAP database, you must add an <i>LDAP external identity</i></li>
+                                                    <li> To sync users from Microsoft Entra ID, you must add a <i>Microsoft Entra ID external identity</i></li>
+                                                </ul>
+                                                <p>When you sync users from an external user database, you can sync any number of users and they are all added to AuthPoint at one time. Users synced from an external user database use the password defined for their user account as their AuthPoint password.</p>
+                                                <p>To learn how to sync users, go to <a href="https://www.watchguard.com/help/docs/help-center/en-US/Content/en-US/authpoint/external-identity_ldap.html" target="_blank">Sync Users from Active Directory or LDAP</a> and <a href="https://www.watchguard.com/help/docs/help-center/en-US/Content/en-US/authpoint/external-identity_azure-ad.html" target="_blank">Sync Users from Azure Active Directory</a>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="#" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false">To add WatchGuard Cloud-hosted AuthPoint users:<img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="12" width="16" alt="Closed" data-mc-alt2="Open" /></a></span>
+                                            <div class="MCDropDownBody dropDownBody">
+                                                <p>You create WatchGuard Cloud-hosted users and groups from the WatchGuard Cloud Directory in WatchGuard Cloud. Directories and Domain Services is where you add shared authentication domains for WatchGuard Cloud devices and services, such as AuthPoint.</p>
+                                                <p>Users that you add to the WatchGuard Cloud Directory are automatically added to AuthPoint as well.</p>
+                                                <p class="Note">You add local AuthPoint users form Directories and Domain Services. You manage the users in AuthPoint on the Users page.</p>
+                                                <p>When you add WatchGuard Cloud-hosted AuthPoint users, you choose whether the user is an MFA user or a non-MFA user.</p>
+                                                <ul>
+                                                    <li>MFA users are user accounts that will use AuthPoint multi-factor authentication to authenticate. This is not related to the AuthPoint Multi-Factor Authentication license type.</li>
+                                                    <li>Non-MFA users are users that will only ever authenticate with a password, such as a service account user. Non-MFA users do not consume an AuthPoint user license and cannot authenticate to resources that require MFA. They can only authenticate to protected resources if the non-MFA user account has a password only authentication policy for that resource.</li>
+                                                </ul>
+                                                <p>After you add a user, you can edit the user account if you need to change their account type. When you change a user account from MFA to non-MFA, AuthPoint deletes the tokens and password vault (if applicable) that belong to the user. This action cannot be undone.
+
+</p>
+                                                <p>Unlike users synced from an external user database, WatchGuard Cloud-hosted AuthPoint users define and manage their own AuthPoint password. When you add a WatchGuard Cloud-hosted user account, the user receives an email that prompts them to set their password.</p>
+                                                <p>To learn how to add WatchGuard Cloud-hosted AuthPoint user accounts to the WatchGuard Cloud Directory, go to <a href="https://www.watchguard.com/help/docs/help-center/en-US/Content/en-US/WG-Cloud/authentication/auth_domain_users_add_local.html" target="_blank">Add Local Users to an Authentication Domain</a>.</p>
+                                            </div>
+                                        </div>
+                                        <h2 id="TesttheIntegration" data-magellan-target="TesttheIntegration">Test the Integration</h2>
+                                        <p style="page-break-after: avoid;page-break-before: avoid;">To test the integration of AuthPoint and the configuration of your Linux, you can authenticate with a mobile token on your mobile device. For RADIUS resources, you can choose a one-time password (OTP) or push.</p>
+                                        <p style="page-break-after: avoid;page-break-before: avoid;">In this example, we show the push authentication method.</p>
+                                        <p>If you want to use the OTP authentication method, the authentication policy for your AuthPoint resource must not allow the push authentication option. If you enable the push and OTP authentication methods for a policy, RADIUS resources associated with the policy use push notifications to authenticate users.</p>
+                                        <ol>
+                                            <li value="1">In an SSH client, connect to the Linux server.</li>
+                                            <li value="2">Type your AuthPoint password.</li>
+                                            <li value="3">Approve the authentication request that is sent to your mobile device.<br /><span class="NumContinued">You are logged in to Linux.</span></li>
+                                        </ol>
+                                    </div>
+                                    <p class="FooterTop"><a href="../../en-US/Fireware/support/doc_feedback.html">Give Us Feedback</a>&#160;&#160;●&#160;&#160;
+            <a href="../../en-US/Fireware/support/getsupport.html">Get Support</a>&#160;&#160;●&#160;&#160;
+            <a href="https://www.watchguard.com/wgrd-help/documentation/overview" target="_blank">All Product Documentation</a>&#160;&#160;●&#160;&#160;
+            <a href="https://techsearch.watchguard.com/" target="_blank">Technical Search</a></p>
+                                    <p class="Footer">© <span class="mc-variable Global.CurrentYear variable">2024</span> WatchGuard Technologies, Inc. All rights reserved. WatchGuard and the WatchGuard logo are registered trademarks or trademarks of WatchGuard Technologies in the United States and other countries. Various other trademarks are held by their respective owners.</p>
+                                    <p class="Footer">&#160;</p>
+                                    <div id="expand-collapse" title="Expand/collapse navigation" class="collapse">
+                                    </div>
+                                    <script src="../../Resources/MasterPages/scripts/expand-collapse.js">
+                                    </script>
+                                    <script src="../../Resources/MasterPages/scripts/cover-hide.js">
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div><a data-close="true"></a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
