@@ -3,13 +3,16 @@ from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import requests
+import json
 
 ROOT = Path(__file__).resolve().parent
 os.chdir(ROOT)
 
-from cogito_query import ask as rag_ask
+from cogito_query import ask as rag_ask, ask_stream as rag_ask_stream
+from cogito_cache import get_cache
 
 LM_STUDIO_URL = "http://localhost:1234"
 
@@ -28,7 +31,8 @@ class AskReq(BaseModel):
     temperature: float = 0.3
     max_tokens: int = 768
     model: Optional[str] = None
-    mode: str = "balanced"  # NEW
+    mode: str = "balanced"  # "fast" | "balanced" | "thorough"
+    use_cache: bool = True
 
 @app.get("/api/models")
 def models():
@@ -51,8 +55,63 @@ def ask(payload: AskReq):
         temperature=payload.temperature,
         max_tokens=payload.max_tokens,
         model=payload.model,
-        mode=payload.mode,   # pass through
+        mode=payload.mode,
+        use_cache=payload.use_cache,
     )
+
+@app.post("/api/ask_stream")
+def ask_stream(payload: AskReq):
+    """
+    Streaming endpoint using Server-Sent Events (SSE).
+    Returns tokens as they're generated.
+    """
+    def event_generator():
+        try:
+            for chunk in rag_ask_stream(
+                payload.question.strip(),
+                depth=payload.depth,
+                temperature=payload.temperature,
+                max_tokens=payload.max_tokens,
+                model=payload.model,
+                mode=payload.mode,
+            ):
+                # SSE format: data: {json}\n\n
+                yield f"data: {json.dumps(chunk)}\n\n"
+            
+            # Signal completion
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            error_data = {"type": "error", "message": str(e)}
+            yield f"data: {json.dumps(error_data)}\n\n"
+    
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+        }
+    )
+
+@app.get("/api/cache/stats")
+def cache_stats():
+    """Get cache statistics."""
+    try:
+        cache = get_cache()
+        return cache.get_stats()
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/api/cache/clear")
+def cache_clear():
+    """Clear the entire cache."""
+    try:
+        cache = get_cache()
+        cache.clear_all()
+        return {"ok": True, "message": "Cache cleared"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
 
 @app.post("/api/ingest")
 def ingest():

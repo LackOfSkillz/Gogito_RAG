@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# cogito_query.py — RAG with autocorrect, query expansion, performance modes, and info-density scoring
+# cogito_query.py — RAG with autocorrect, query expansion, performance modes, info-density scoring, and streaming
 
 from __future__ import annotations
 import os, re, difflib, time, math
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -198,6 +198,7 @@ def ask(
     max_tokens: int = 900,
     model: Optional[str] = None,
     mode: str = "balanced",  # "fast" | "balanced" | "thorough"
+    use_cache: bool = True,
 ) -> Dict[str, Any]:
 
     # mode presets
@@ -209,6 +210,39 @@ def ask(
     p = presets.get(mode, presets["balanced"])
 
     t0 = time.time()
+
+    # NEW: Check cache first (if enabled)
+    if use_cache:
+        try:
+            from cogito_cache import get_cache
+            cache = get_cache()
+            # We need chunk IDs for cache key, so we do a quick retrieval first
+            retriever = _retriever(depth)
+            docs: List[Any] = retriever.invoke(question)
+            chunk_ids = [getattr(d, "id", str(i)) for i, d in enumerate(docs[:p["top_docs"]])]
+            
+            cached = cache.get(
+                question=question,
+                mode=mode,
+                depth=depth,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                model=model,
+                space="default",  # will be parameterized in Spaces feature
+                chunk_ids=chunk_ids,
+            )
+            if cached:
+                cached["timings"] = {
+                    "retriever_init_s": 0.0,
+                    "doc_fetch_s": 0.0,
+                    "llm_time_s": 0.0,
+                    "total_s": round(time.time() - t0, 2),
+                }
+                return cached
+        except Exception as e:
+            # Cache failure shouldn't break queries
+            print(f"Cache lookup error: {e}")
+
     retriever = _retriever(depth)
     t1 = time.time()
 
@@ -272,7 +306,8 @@ def ask(
     _, sources = _build_context(docs, take=min(p["top_docs"], max(8, depth)), max_chars=400)
 
     t3 = time.time()
-    return {
+
+    result = {
         "answer": answer or "Summary based on limited context.",
         "sources": sources,
         "timings": {
@@ -285,6 +320,139 @@ def ask(
         "replacements": replacements,
         "mode": mode,
     }
+
+    # NEW: Store in cache (if enabled)
+    if use_cache and answer:
+        try:
+            from cogito_cache import get_cache
+            cache = get_cache()
+            chunk_ids = [getattr(d, "id", str(i)) for i, d in enumerate(docs[:p["top_docs"]])]
+            cache.put(
+                question=question,
+                answer=answer,
+                sources=sources,
+                mode=mode,
+                depth=depth,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                model=model,
+                space="default",
+                chunk_ids=chunk_ids,
+                query_used=corrected_query,
+                replacements=replacements,
+            )
+        except Exception as e:
+            print(f"Cache store error: {e}")
+
+    return result
+
+
+def ask_stream(
+    question: str,
+    depth: int = 12,
+    temperature: float = 0.25,
+    max_tokens: int = 900,
+    model: Optional[str] = None,
+    mode: str = "balanced",
+) -> Generator[Dict[str, Any], None, None]:
+    """
+    Streaming version of ask() that yields tokens as they're generated.
+    Yields dicts with 'type' field:
+    - {'type': 'metadata', 'sources': [...], 'query_used': '...', 'mode': '...'}
+    - {'type': 'token', 'content': 'word'}
+    - {'type': 'done', 'timings': {...}}
+    """
+    presets = {
+        "fast":      {"top_docs": 6,  "note_docs": 4, "note_chars": 1200, "max_tokens": min(max_tokens, 600)},
+        "balanced":  {"top_docs": 10, "note_docs": 8, "note_chars": 1500, "max_tokens": max_tokens},
+        "thorough":  {"top_docs": 14, "note_docs": 12,"note_chars": 2000, "max_tokens": max(max_tokens, 1200)},
+    }
+    p = presets.get(mode, presets["balanced"])
+
+    t0 = time.time()
+    retriever = _retriever(depth)
+    t1 = time.time()
+
+    # Retrieval + preprocessing (same as non-streaming)
+    docs: List[Any] = retriever.invoke(question)
+    t2 = time.time()
+
+    corrected_query, replacements = question, {}
+    if len(docs) == 0 or (len(docs) <= 2 and any(len(w) >= 5 for w in _tokenize(question))):
+        corrected_query, replacements = _autocorrect_query(question)
+        q2 = corrected_query
+        if q2 != question:
+            docs2 = retriever.invoke(q2)
+            if len(docs2) >= len(docs): docs = docs2
+        if len(docs) <= 2:
+            q3 = _expand_query(q2)
+            if q3 != q2:
+                docs3 = retriever.invoke(q3)
+                if len(docs3) >= len(docs): docs = docs3
+                corrected_query = q3
+
+    docs = _rank_docs_by_density(docs)
+
+    # Send metadata first
+    _, sources = _build_context(docs, take=min(p["top_docs"], max(8, depth)), max_chars=400)
+    yield {
+        "type": "metadata",
+        "sources": sources,
+        "query_used": corrected_query,
+        "replacements": replacements,
+        "mode": mode,
+    }
+
+    # Streaming LLM
+    llm = _llm(model, temperature, p["max_tokens"], streaming=True)
+
+    # Map: extract notes (non-streaming for now, could be optimized)
+    notes: List[str] = []
+    for idx, d in enumerate(docs[: p["note_docs"]], 1):
+        dtext = (getattr(d, "page_content", "") or "")[: p["note_chars"]]
+        if not dtext.strip(): continue
+        note_resp = llm.invoke(_messages_for_note(dtext, f"doc{idx}"))
+        n = (getattr(note_resp, "content", "") or "").strip()
+        if n:
+            for line in n.splitlines():
+                line = line.strip().lstrip("-• \t")
+                if line: notes.append(line)
+        if mode == "fast" and len(notes) >= 10:
+            break
+
+    # Reduce: stream merged answer
+    if notes:
+        messages = _messages_for_merge(notes, question, style=mode)
+    else:
+        ctx, _ = _build_context(docs, take=p["top_docs"], max_chars=p["note_chars"])
+        messages = [
+            SystemMessage(content=SYSTEM_PROMPT),
+            HumanMessage(content=(
+                "Create a best-effort executive summary (bullets or two short paragraphs) strictly from this context. "
+                "No statements about needing more documents.\n\n"
+                f"{ctx}"
+            ))
+        ]
+
+    # Stream tokens
+    for chunk in llm.stream(messages):
+        content = getattr(chunk, "content", "")
+        if content:
+            yield {"type": "token", "content": content}
+
+    t3 = time.time()
+
+    # Send timings at end
+    yield {
+        "type": "done",
+        "timings": {
+            "retriever_init_s": round(t1 - t0, 2),
+            "doc_fetch_s": round(t2 - t1, 2),
+            "llm_time_s": round(t3 - t2, 2),
+            "total_s": round(t3 - t0, 2),
+        },
+    }
+
 
 if __name__ == "__main__":
     out = ask("Give me an executive summary of Survalent.", depth=12, temperature=0.25, max_tokens=900, model=None, mode="fast")

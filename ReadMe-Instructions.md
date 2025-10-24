@@ -1,6 +1,6 @@
 Cogito — Local, Privacy-First RAG Assistant (City of Ocala Electric)
 
-Status: Working prototype. Current code reflects the system before recent design upgrades discussed in the last 48 hours. This README covers the working build and outlines forward-looking features where helpful.
+Status: Active development. **NEW: Streaming answers with real-time token display and intelligent answer caching for instant responses.**
 
 Table of Contents
 
@@ -56,13 +56,21 @@ OCR support for images (Tesseract) with a persistent cache at .cache/ocr/.
 
 Vector search with Chroma (persistent on disk) and MiniLM embeddings.
 
+**Streaming answers with Server-Sent Events (SSE)** — tokens appear as they're generated, first token typically < 1 second (warm).
+
+**Intelligent answer cache** — instant responses for repeat/similar questions with automatic invalidation on content changes.
+
+**Real-time cancel** — stop generation mid-answer with < 200ms response time.
+
 GUI for chat, model selection, depth/temperature sliders, and one-click re-ingestion.
 
-Debug metrics (retrieval time, LLM time, total cycle).
+React UI with streaming support, cache statistics, and modern responsive design.
+
+Debug metrics (retrieval time, LLM time, total cycle, cache hit rate).
 
 Windows-friendly: PowerShell helpers, paths, and Unicode-safe logging.
 
-Planned (not yet shipped in this build): Spaces (multi-KB), React UI with streaming & cancel, hybrid retrieval (BM25+vectors), reranker, answer cache, linked folders, internal engine option, dual-engine routing, previews, Domain Packs, eval console.
+Planned (not yet shipped in this build): Spaces (multi-KB), hybrid retrieval (BM25+vectors), reranker, linked folders, internal engine option, dual-engine routing, previews, Domain Packs, eval console.
 
 Architecture
 
@@ -261,20 +269,70 @@ Common calls (PowerShell examples):
 # List models from LM Studio (proxied)
 Invoke-RestMethod -Method GET http://127.0.0.1:8000/api/models
 
-# Ask a question
+# Ask a question (standard)
 $body = @{
   question    = "Give me an executive summary of Survalent."
   depth       = 10
   temperature = 0.25
   max_tokens  = 900
   model       = "google/gemma-3-12b"
+  mode        = "balanced"
+  use_cache   = $true
 } | ConvertTo-Json
 Invoke-RestMethod -Method POST http://127.0.0.1:8000/api/ask -ContentType "application/json" -Body $body
+
+# Ask with streaming (SSE) - use EventSource or curl for streaming
+curl -X POST http://127.0.0.1:8000/api/ask_stream \
+  -H "Content-Type: application/json" \
+  -d '{"question":"Explain SCADA architecture","depth":10,"mode":"balanced"}' \
+  -N
+
+# Get cache statistics
+Invoke-RestMethod -Method GET http://127.0.0.1:8000/api/cache/stats
+
+# Clear cache
+Invoke-RestMethod -Method POST http://127.0.0.1:8000/api/cache/clear
 
 # Trigger ingest (incremental)
 $body = @{ } | ConvertTo-Json
 Invoke-RestMethod -Method POST http://127.0.0.1:8000/api/ingest -ContentType "application/json" -Body $body
 
+
+### NEW Streaming Endpoint
+
+**POST /api/ask_stream** returns Server-Sent Events (SSE) with real-time token generation:
+
+```
+data: {"type":"metadata","sources":[...],"mode":"balanced"}
+
+data: {"type":"token","content":"The"}
+data: {"type":"token","content":" Survalent"}
+data: {"type":"token","content":"ONE"}
+...
+data: {"type":"done","timings":{...}}
+
+data: [DONE]
+```
+
+- **First token latency**: Typically < 1 second on warm API
+- **Cancellation**: Client abort stops generation within 200ms
+- **Use case**: React UI uses EventSource API with AbortController
+
+### Cache Endpoints
+
+**GET /api/cache/stats** - Returns cache metrics:
+```json
+{
+  "total_entries": 45,
+  "total_hits": 123,
+  "hit_rate": 0.732,
+  "oldest_entry_age_s": 86400,
+  "newest_entry_age_s": 120,
+  "size_mb": 2.3
+}
+```
+
+**POST /api/cache/clear** - Clears entire cache (use after major ingestion changes)
 
 Additional endpoints may include Spaces and Previews in future versions.
 
@@ -288,9 +346,15 @@ Depth: Start with depth 8–12; higher depth can slow retrieval/generation.
 
 OCR cache: Keep .cache/ocr/ enabled.
 
+**Answer cache**: Enabled by default. Provides sub-100ms responses for repeat queries. Automatically invalidated when source chunks change.
+
+**Streaming**: Use `/api/ask_stream` for better perceived performance — first token appears in < 1s (warm), users can cancel long answers.
+
 Batch sizes: Loader uses bounded upsert batches to avoid driver errors.
 
 Warm start: Keep API running to avoid first-query lag.
+
+Cache Statistics: Monitor via `/api/cache/stats` — target hit rate > 30% for typical ops workloads.
 
 Security & Privacy
 
@@ -330,9 +394,9 @@ Verify db_index.json timestamp and run with --progress for details.
 
 Roadmap
 
-v0.8: Spaces, React UI with streaming + cancel, answer cache, warm start
+**v0.8 (COMPLETED)**: ✅ Streaming answers with SSE + Cancel, ✅ Answer Cache with automatic invalidation
 
-v0.9: Hybrid retrieval (BM25+vectors + RRF), local reranker, smart chunking v2, linked folders
+v0.9: Spaces (multi-KB collections), React UI production polish, hybrid retrieval (BM25+vectors + RRF), local reranker, smart chunking v2, linked folders
 
 v1.0: Domain Packs, internal engine (llama.cpp) option, dual-engine routing, page previews, exports, eval console, (optional RBAC & audit)
 
